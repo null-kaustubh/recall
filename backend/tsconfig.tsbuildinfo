@@ -1,0 +1,1 @@
+{"root":["./src/db.ts","./src/index.ts","./src/middleware.ts","./src/routes/auth.ts","./src/routes/content.ts","./src/routes/recall.ts"],"version":"5.8.3"}
