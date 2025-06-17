@@ -3,8 +3,8 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import { UserModel } from "../db";
 import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../config";
 const authRouter = Router();
-const JWT_SECRET = process.env.JWT_USER_SECRET;
 
 authRouter.post("/signup", async function (req: Request, res: Response) {
   const requiredBody = z
@@ -80,8 +80,8 @@ authRouter.post("/signin", async function (req: Request, res: Response) {
     username: username,
   });
 
-  if (user) {
-    const comparePassword = await bcrypt.compare(password, user.password!);
+  if (user?.password) {
+    const comparePassword = await bcrypt.compare(password, user.password);
 
     if (comparePassword) {
       const token = jwt.sign(
