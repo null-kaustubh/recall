@@ -15,6 +15,14 @@ const port = 3000;
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Server is running",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.use("/api", authRouter);
 app.use("/api", contentRouter);
 app.use("/api/recall", shareRouter);
