@@ -7,7 +7,7 @@ import express from "express";
 import mongoose from "mongoose";
 import authRouter from "./routes/auth";
 import contentRouter from "./routes/content";
-import shareRouter from "./routes/recall";
+import shareRouter from "./routes/share";
 
 const app = express();
 const port = 3000;

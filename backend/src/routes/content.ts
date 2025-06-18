@@ -31,12 +31,13 @@ contentRouter.post(
   async function (req: Request, res: Response) {
     const title = req.body.title;
     const link = req.body.link;
+    const tags = req.body.tags;
     await ContentModel.create({
       title: title,
       link: link,
       //@ts-ignore
       userId: req.userId,
-      tags: [],
+      tags: tags,
     });
     res.status(200).json({
       message: "Recall added",
