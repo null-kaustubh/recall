@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import path from "path";
+import { job } from "./cron";
 
 config({ path: path.resolve(__dirname, "../.env") });
 
@@ -39,4 +40,5 @@ async function startServer() {
   }
 }
 
+job.start();
 startServer();
