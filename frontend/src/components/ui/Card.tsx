@@ -1,6 +1,5 @@
 import { RxExternalLink, RxTwitterLogo } from "react-icons/rx";
 import { fadeInOut } from "./default";
-import Badge from "./Badge";
 
 interface CardProps {
   title?: string;
@@ -38,9 +37,6 @@ export default function Card(props: CardProps) {
         </div>
 
         <div className="flex items-center gap-2 ml-3">
-          <div className="flex gap-1">
-            <Badge />
-          </div>
           <RxExternalLink className="h-4 w-4 text-neutral-400 dark:text-neutral-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </div>
