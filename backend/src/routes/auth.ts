@@ -27,6 +27,7 @@ authRouter.post("/signup", async function (req: Request, res: Response) {
     res.status(411).json({
       error: parsedData.error,
     });
+    console.log(parsedData.error);
     return;
   }
 

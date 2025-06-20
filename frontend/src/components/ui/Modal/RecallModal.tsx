@@ -34,7 +34,7 @@ export default function RecallModal(props: RecallModalProps) {
               <Button variants="secondaryIcon" icon={<Pen size={"14px"} />} />
             </div>
             <div onClick={props.onClose} className="cursor-pointer">
-              <RxCross2 />
+              <Button variants="secondaryIcon" icon={<RxCross2 />} />
             </div>
           </div>
           <div className="px-4 mt-2">
@@ -63,15 +63,15 @@ export default function RecallModal(props: RecallModalProps) {
             </div>
           </div>
           <div className="px-4 mt-3 mb-5 flex items-center gap-2">
-            <Button
-              variants="secondary"
-              text="Cancel"
-              startIcon={<RxCross2 />}
-            />
-            <Button variants="primary" text="Save" />
+            <div onClick={props.onClose} className="cursor-pointer">
+              <Button variants="secondary" text="Cancel" className="w-50" />
+            </div>
+            <div className="w-full">
+              <Button variants="submit" text="Save" />
+            </div>
             <Button
               variants="destructiveIcon"
-              icon={<Trash2 size={"18px"} />}
+              icon={<Trash2 size={"18px"} className="w-10" />}
             />
           </div>
         </div>

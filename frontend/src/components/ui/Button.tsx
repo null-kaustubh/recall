@@ -13,6 +13,7 @@ export interface ButtonProps {
   icon?: ReactElement;
   startIcon?: ReactElement;
   onClick?: () => void;
+  className?: string;
 }
 
 const variantStyles = {
@@ -34,9 +35,13 @@ export default function Button(props: ButtonProps) {
   const text = props.text;
   const icon = props.icon;
   const startIcon = props.startIcon;
+  const className = props.className;
 
   return (
-    <button className={`${variantStyles[variant]} ${fadeInOut}`}>
+    <button
+      onClick={props.onClick}
+      className={`${variantStyles[variant]} ${fadeInOut} ${className}`}
+    >
       {variant === "icon" ||
       variant === "secondaryIcon" ||
       variant === "destructiveIcon" ? (

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Button from "../components/ui/Button";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { BACKEND_URL } from "../config";
+import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
   const [mode, setMode] = useState<"signin" | "signup">("signup");
@@ -11,9 +12,9 @@ export default function Auth() {
     password: "",
     confirmPassword: "",
   });
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -22,13 +23,27 @@ export default function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "signin") {
-      console.log("Sign in:", {
+      const response = await axios.post(`${BACKEND_URL}api/signin`, {
         username: formData.username,
         password: formData.password,
       });
-      await axios.post(`${BACKEND_URL}`);
+      //store token to headers
+      const jwt = response.data.token;
+      localStorage.setItem("token", jwt);
+      //navigate user to dashboard
+      navigate("/dashboard");
     } else {
-      console.log("Sign up:", formData);
+      await axios.post(`${BACKEND_URL}api/signup`, {
+        username: formData.username,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+      });
+      setMode("signin");
+      setFormData({
+        username: "",
+        password: "",
+        confirmPassword: "",
+      });
     }
   };
 

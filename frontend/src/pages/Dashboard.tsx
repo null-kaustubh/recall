@@ -4,9 +4,11 @@ import Card from "../components/ui/Card";
 import RecallModal from "../components/ui/Modal/RecallModal";
 import { useState } from "react";
 import Sidebar from "../components/ui/Sidebar";
+import CreateContentModal from "../components/ui/Modal/CreateContentModal";
 
 function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [contentModalOpen, setContentModalOpen] = useState(false);
 
   return (
     <div>
@@ -22,14 +24,18 @@ function Dashboard() {
           tags={["string1", "string2"]}
           url="https://randomurl.com"
         />
+        <CreateContentModal
+          open={contentModalOpen}
+          onClose={() => setContentModalOpen(!contentModalOpen)}
+        />
         <div className="ml-4 mt-4">
           <div className="flex gap-2 my-4">
             <Button
               variants="primary"
               text="Add recall"
               startIcon={<RxPlus />}
+              onClick={() => setContentModalOpen(true)}
             />
-            <Button variants="secondary" text="Add recall" />
             <Button variants="icon" icon={<RxShare1 />} />
             <Button variants="icon" icon={<RxSun />} />
           </div>
