@@ -4,10 +4,14 @@ import useClickOutside from "../../../hooks/useClickOutside";
 import { Pen, Trash2 } from "lucide-react";
 import Button from "../Button";
 import Badge from "../Badge";
+import axios from "axios";
+import { BACKEND_DEV, BACKEND_URL } from "../../../config";
 
 interface RecallModalProps {
   open: boolean;
   onClose: () => void;
+  onDelete: () => void;
+  id: string;
   title: string;
   note: string;
   tags: string[];
@@ -20,6 +24,21 @@ export default function RecallModal(props: RecallModalProps) {
 
   if (!props.open) return null;
   const tags = props.tags;
+
+  async function deleteRecall(id: string) {
+    try {
+      console.log("deleting: ", id);
+      await axios.delete(`${BACKEND_URL}api/content`, {
+        data: { contentId: id },
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      });
+      props.onDelete();
+    } catch (e) {
+      console.error(`Error in deleting recall ${e}`);
+    }
+  }
 
   return (
     <div className="w-screen h-screen fixed top-0 left-0 bg-[rgba(24,24,24,0.8)] backdrop-blur-[1px] flex justify-center items-center z-50">
@@ -41,7 +60,19 @@ export default function RecallModal(props: RecallModalProps) {
             <div>Notes</div>
             <div className="font-extralight flex items-center my-2">
               {props.note}
-              <Button variants="secondaryIcon" icon={<Pen size={"12px"} />} />
+              {props.note.length > 0 ? (
+                <Button variants="secondaryIcon" icon={<Pen size={"12px"} />} />
+              ) : (
+                <div>
+                  <span className="font-extralight items-center my-2">
+                    add note
+                  </span>
+                  <Button
+                    variants="secondaryIcon"
+                    icon={<Pen size={"12px"} />}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div className="px-4 mt-4">
@@ -88,7 +119,13 @@ export default function RecallModal(props: RecallModalProps) {
             </div>
             <Button
               variants="destructiveIcon"
-              icon={<Trash2 size={"18px"} className="w-10" />}
+              icon={
+                <Trash2
+                  size={"18px"}
+                  className="w-10"
+                  onClick={() => deleteRecall(props.id)}
+                />
+              }
             />
           </div>
         </div>

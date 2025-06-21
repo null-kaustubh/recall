@@ -28,7 +28,22 @@ export default function useContent() {
       })
       .then((response) => {
         if (response.data.content && Array.isArray(response.data.content)) {
-          setContents(response.data.content);
+          setContents(
+            response.data.content
+              .sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+              )
+              .map((item: any) => ({
+                id: item._id,
+                title: item.title,
+                note: item.note,
+                tags: item.tags,
+                link: item.link,
+                createdAt: item.createdAt,
+              }))
+          );
           setNoContentMessage("");
         } else if (response.data.noContent) {
           setContents([]);

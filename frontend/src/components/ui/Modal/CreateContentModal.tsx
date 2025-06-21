@@ -4,6 +4,7 @@ import Button from "../Button";
 import Badge from "../Badge";
 import { BACKEND_URL } from "../../../config";
 import axios from "axios";
+import type { ContentItem } from "../default";
 
 interface CreateContentModalProps {
   open: boolean;

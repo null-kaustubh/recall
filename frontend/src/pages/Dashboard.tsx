@@ -6,14 +6,7 @@ import { useState } from "react";
 import Sidebar from "../components/ui/Sidebar";
 import CreateContentModal from "../components/ui/Modal/CreateContentModal";
 import useContent from "../hooks/useContent";
-
-interface ContentItem {
-  id: string;
-  title: string;
-  note: string;
-  tags?: string[];
-  link: string;
-}
+import type { ContentItem } from "../components/ui/default";
 
 function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -25,6 +18,7 @@ function Dashboard() {
   const { contents, noContentMessage, loading, refreshContents } = useContent();
 
   const handleCardClick = (content: ContentItem) => {
+    console.log("Card clicked with ID:", content.id);
     setSelectedContent(content);
     setModalOpen(true);
   };
@@ -53,7 +47,11 @@ function Dashboard() {
                   <div>
                     <Card
                       key={c.id}
+                      id={c.id}
                       title={c.title}
+                      author=""
+                      createdAt={c.createdAt}
+                      url={c.link}
                       onClick={() => handleCardClick(c)}
                     />
                   </div>
@@ -78,6 +76,11 @@ function Dashboard() {
         onClose={() => {
           setModalOpen(!modalOpen);
         }}
+        onDelete={() => {
+          refreshContents();
+          setModalOpen(false);
+        }}
+        id={selectedContent?.id || ""}
         title={selectedContent?.title || ""}
         note={selectedContent?.note || ""}
         tags={selectedContent?.tags || []}
