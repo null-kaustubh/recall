@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import useClickOutside from "../../../hooks/useClickOutside";
 import Button from "../Button";
-import { RxCross2 } from "react-icons/rx";
 import Badge from "../Badge";
 import { BACKEND_URL } from "../../../config";
 import axios from "axios";
@@ -11,23 +10,82 @@ interface CreateContentModalProps {
   onClose: () => void;
 }
 
+interface FormData {
+  title: string;
+  link: string;
+  notes?: string;
+  tags?: string[];
+}
+
 export default function CreateContentModal(props: CreateContentModalProps) {
   const contentRef = useRef(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     link: "",
     notes: "",
     tags: [],
   });
-  useClickOutside(contentRef, props.onClose);
+  const [currentTag, setCurrentTag] = useState<string>("");
 
+  // handling cancel button and outside clicks
+  const resetFormData = () => {
+    setFormData({
+      title: "",
+      link: "",
+      notes: "",
+      tags: [],
+    });
+    setCurrentTag("");
+  };
+
+  const handleClose = () => {
+    resetFormData();
+    props.onClose();
+  };
+
+  // handling clicks outside the modal
+  useClickOutside(contentRef, handleClose);
   if (!props.open) return null;
 
-  const handleInputChange = (field: string, value: string) => {
+  const addTag = (tagText) => {
+    const trimmedTag = tagText.trim();
+    const currentTags = formData.tags || [];
+    if (trimmedTag && !currentTags.includes(trimmedTag)) {
+      handleInputChange("tags", [...currentTags, trimmedTag]);
+    }
+    setCurrentTag("");
+  };
+
+  const removeTag = (indexToRemove: number) => {
+    const currentTags = formData.tags || [];
+    const updatedTags = currentTags.filter(
+      (_, index) => index !== indexToRemove
+    );
+    handleInputChange("tags", updatedTags);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      addTag(currentTag);
+    } else if (
+      e.key === "Backspace" &&
+      currentTag === "" &&
+      (formData.tags?.length || 0) > 0
+    ) {
+      // Remove last tag when backspace is pressed on empty input
+      removeTag((formData.tags?.length || 1) - 1);
+    }
+  };
+
+  const handleInputChange = (
+    field: keyof FormData,
+    value: string | string[]
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const addContent = async (e: React.FormEvent) => {
     e.preventDefault();
   };
 
@@ -44,7 +102,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
               Recall
             </span>
           </div>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={addContent} className="space-y-4">
             {/* Title Field */}
             <div className="space-y-1">
               <label
@@ -96,12 +154,30 @@ export default function CreateContentModal(props: CreateContentModalProps) {
                   id="tags"
                   type="text"
                   placeholder="productivity"
-                  value={formData.tags}
-                  onChange={(e) => handleInputChange("tags", e.target.value)}
+                  value={currentTag}
+                  onChange={(e) => setCurrentTag(e.target.value)}
+                  onKeyDown={handleKeyPress}
                   className="w-full px-3 py-1.5 pr-10 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
                 />
               </div>
             </div>
+
+            {/* Display existing tags as badges */}
+            {(formData.tags?.length || 0) > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2">
+                {formData.tags?.map((tag, index) => (
+                  <Badge
+                    variants="input"
+                    tag={tag}
+                    onClick={() => removeTag(index)}
+                  />
+                ))}
+              </div>
+            )}
+
+            <p className="text-xs text-neutral-400 mt-1">
+              Press spacebar or enter to add tags. Click x to remove.
+            </p>
 
             {/* Links Field */}
             <div className="space-y-1">
@@ -117,7 +193,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
                   type="text"
                   placeholder="https://johndoe.com"
                   value={formData.link}
-                  onChange={(e) => handleInputChange("links", e.target.value)}
+                  onChange={(e) => handleInputChange("link", e.target.value)}
                   className="w-full px-3 py-1.5 pr-10 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
                 />
               </div>
@@ -126,7 +202,12 @@ export default function CreateContentModal(props: CreateContentModalProps) {
             {/* Submit Button */}
             <div className="flex items-center justify-between gap-2">
               <div onClick={props.onClose} className="cursor-pointer mt-2">
-                <Button variants="secondary" text="Cancel" className="w-40" />
+                <Button
+                  variants="secondary"
+                  text="Cancel"
+                  className="w-40"
+                  onClick={resetFormData}
+                />
               </div>
               <div className="mt-2 w-full">
                 <Button variants="submit" text="Submit" />

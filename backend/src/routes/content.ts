@@ -31,10 +31,12 @@ contentRouter.post(
   async function (req: Request, res: Response) {
     const title = req.body.title;
     const link = req.body.link;
+    const note = req.body.note;
     const tags = req.body.tags;
     await ContentModel.create({
       title: title,
       link: link,
+      note: note,
       //@ts-ignore
       userId: req.userId,
       tags: tags,
