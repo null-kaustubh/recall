@@ -5,6 +5,7 @@ interface CardProps {
   title?: string;
   author?: string;
   date?: string;
+  tags?: string[];
   onClick?: () => void;
 }
 
@@ -12,7 +13,7 @@ export default function Card(props: CardProps) {
   return (
     <div onClick={props.onClick}>
       <div
-        className={`group flex items-center justify-between rounded-lg bg-white dark:bg-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 px-4 py-4 ${fadeInOut}`}
+        className={`group flex items-center justify-between rounded-lg bg-white dark:bg-neutral-850 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 px-4 py-4 ${fadeInOut} my-4`}
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div>

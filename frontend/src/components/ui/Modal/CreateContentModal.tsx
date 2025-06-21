@@ -8,12 +8,13 @@ import axios from "axios";
 interface CreateContentModalProps {
   open: boolean;
   onClose: () => void;
+  onContentAdded: (newContent: ContentItem) => void;
 }
 
 interface FormData {
   title: string;
   link: string;
-  notes?: string;
+  note?: string;
   tags?: string[];
 }
 
@@ -22,7 +23,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
   const [formData, setFormData] = useState<FormData>({
     title: "",
     link: "",
-    notes: "",
+    note: "",
     tags: [],
   });
   const [currentTag, setCurrentTag] = useState<string>("");
@@ -32,7 +33,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
     setFormData({
       title: "",
       link: "",
-      notes: "",
+      note: "",
       tags: [],
     });
     setCurrentTag("");
@@ -87,6 +88,27 @@ export default function CreateContentModal(props: CreateContentModalProps) {
 
   const addContent = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}api/content`,
+        {
+          title: formData.title,
+          link: formData.link,
+          note: formData.note,
+          tags: formData.tags,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      props.onContentAdded(response.data);
+      handleClose();
+    } catch (error) {
+      console.error("Error adding content:", error);
+      // Handle error appropriately
+    }
   };
 
   return (
@@ -134,8 +156,8 @@ export default function CreateContentModal(props: CreateContentModalProps) {
                   id="notes"
                   type="text"
                   placeholder="react.js context api tips from john doe (Google)"
-                  value={formData.notes}
-                  onChange={(e) => handleInputChange("notes", e.target.value)}
+                  value={formData.note}
+                  onChange={(e) => handleInputChange("note", e.target.value)}
                   className="w-full px-3 py-1.5 pr-10 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
                 />
               </div>

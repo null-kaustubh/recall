@@ -9,9 +9,9 @@ interface RecallModalProps {
   open: boolean;
   onClose: () => void;
   title: string;
-  notes: string;
+  note: string;
   tags: string[];
-  url: string;
+  link: string;
 }
 
 export default function RecallModal(props: RecallModalProps) {
@@ -40,7 +40,7 @@ export default function RecallModal(props: RecallModalProps) {
           <div className="px-4 mt-2">
             <div>Notes</div>
             <div className="font-extralight flex items-center my-2">
-              {props.notes}
+              {props.note}
               <Button variants="secondaryIcon" icon={<Pen size={"12px"} />} />
             </div>
           </div>
@@ -54,11 +54,28 @@ export default function RecallModal(props: RecallModalProps) {
           </div>
           <div className="px-4 mt-4">
             <div>Link</div>
-            <div className="bg-neutral-750 rounded-md p-3 my-2 flex justify-between items-center text-neutral-200">
-              {props.url}
-              <div className="flex items-center gap-2">
-                <Button variants="secondaryIcon" icon={<Pen size={"14px"} />} />
-                <Button variants="secondaryIcon" icon={<RxExternalLink />} />
+            <div className="bg-neutral-750 rounded-md p-3 my-2 text-neutral-200">
+              <div className="flex items-center">
+                <div
+                  className="overflow-hidden text-ellipsis whitespace-nowrap flex-shrink"
+                  style={{ width: "400px", maxWidth: "400px" }}
+                  title={props.link}
+                >
+                  {props.link}
+                </div>
+                <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+                  <Button
+                    variants="secondaryIcon"
+                    icon={<Pen size={"14px"} />}
+                  />
+                  <Button
+                    variants="secondaryIcon"
+                    icon={<RxExternalLink />}
+                    onClick={() =>
+                      props.link && window.open(props.link, "_blank")
+                    }
+                  />
+                </div>
               </div>
             </div>
           </div>

@@ -7,13 +7,18 @@ const User = new Schema({
 
 export const UserModel = mongoose.model("users", User);
 
-const Content = new Schema({
-  title: String,
-  link: String,
-  note: String,
-  tags: [String],
-  userId: { type: mongoose.Types.ObjectId, ref: "users", required: true },
-});
+const Content = new Schema(
+  {
+    title: String,
+    link: String,
+    note: String,
+    tags: [String],
+    userId: { type: mongoose.Types.ObjectId, ref: "users", required: true },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 export const ContentModel = mongoose.model("contents", Content);
 
