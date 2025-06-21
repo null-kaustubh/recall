@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import authMiddleware from "../middleware";
 import { ContentModel } from "../db";
+import { Types } from "mongoose";
 const contentRouter = Router();
 
 contentRouter.get(
@@ -55,21 +56,24 @@ contentRouter.delete(
     //@ts-ignore
     const userId = req.userId;
 
-    let err = false;
     try {
-      await ContentModel.deleteOne({
-        id: contentId,
+      const result = await ContentModel.deleteMany({
+        _id: contentId,
         userId: userId,
       });
-    } catch (e) {
-      err = true;
-      res.status(403).json({
-        message: "Error in deleting recall",
-      });
-    }
-    if (!err) {
+
+      if (result.deletedCount === 0) {
+        res.status(404).json({
+          message:
+            "Content not found or you don't have permission to delete it",
+        });
+      }
       res.status(200).json({
         message: "Recall deleted",
+      });
+    } catch (e) {
+      res.status(403).json({
+        message: "Error in deleting recall",
       });
     }
   }
