@@ -58,7 +58,7 @@ contentRouter.delete(
     let err = false;
     try {
       await ContentModel.deleteOne({
-        id: contentId,
+        _id: contentId,
         userId: userId,
       });
     } catch (e) {
