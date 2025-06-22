@@ -15,7 +15,7 @@ interface CardProps {
 }
 
 export default function Card(props: CardProps) {
-  const timeAgo = useCompactTimeAgo(props.createdAt);
+  const timeAgo = useCompactTimeAgo(props.createdAt!);
 
   const renderTags = () => {
     if (!props.tags || props.tags.length === 0) return null;

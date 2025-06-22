@@ -28,6 +28,7 @@ export default function getIcon(url: string) {
     // Default fallback icon
     return <RxFileText />;
   } catch (err) {
+    console.log(err);
     return <RxFileText />; // In case of invalid URL
   }
 }
