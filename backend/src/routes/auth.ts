@@ -94,6 +94,10 @@ authRouter.post("/signin", async function (req: Request, res: Response) {
       res.status(200).json({
         token,
       });
+    } else {
+      res.status(403).json({
+        message: "Incorrect credentials",
+      });
     }
   } else {
     res.status(403).json({

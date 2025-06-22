@@ -14,20 +14,21 @@ export interface ButtonProps {
   startIcon?: ReactElement;
   onClick?: () => void;
   className?: string;
+  type?: "button" | "submit" | "reset";
 }
 
 const variantStyles = {
   primary:
-    "h-10 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 hover:text-neutral-50 rounded-md px-3 py-2",
+    "h-10 bg-neutral-200 text-neutral-900 font-semibold rounded-lg px-4 py-2 hover:bg-white transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105",
   secondary:
-    "h-10 bg-neutral-800 text-neutral-300 border-neutral-500 rounded-md border-1 px-3 py-2 hover:bg-neutral-750 hover:text-neutral-50",
-  icon: "h-10 w-10 p-2 text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md",
+    "h-10 bg-neutral-800 text-neutral-300 border border-neutral-700 rounded-lg px-4 py-2 font-medium transition-all duration-300 hover:bg-red-950 hover:text-red-500 hover:border-red-500 hover:shadow-md",
+  icon: "h-10 w-10 p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition-all duration-200",
   secondaryIcon:
-    "pl-2 text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200",
+    "pl-2 text-neutral-400 hover:text-white font-medium transition-all duration-200 hover:underline",
   destructiveIcon:
-    "h-10 w-10 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-md",
+    "h-10 w-10 text-red-500 hover:text-red-600 hover:bg-red-500/10 rounded-lg transition-all duration-200",
   submit:
-    "h-10 w-full bg-neutral-700 hover:bg-neutral-600 text-neutral-200 hover:text-neutral-50 rounded-md px-3 py-2",
+    "h-10 w-full bg-neutral-700 text-white font-semibold rounded-lg px-6 py-2 hover:bg-green-800 transition-all duration-300 shadow-md hover:shadow-lg",
 };
 
 export default function Button(props: ButtonProps) {
@@ -39,6 +40,7 @@ export default function Button(props: ButtonProps) {
 
   return (
     <button
+      type={props.type || "button"}
       onClick={props.onClick}
       className={`${variantStyles[variant]} ${fadeInOut} ${className}`}
     >

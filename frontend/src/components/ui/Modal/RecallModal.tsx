@@ -5,7 +5,7 @@ import { Pen, Trash2 } from "lucide-react";
 import Button from "../Button";
 import Badge from "../Badge";
 import axios from "axios";
-import { BACKEND_DEV, BACKEND_URL } from "../../../config";
+import { BACKEND_URL } from "../../../config";
 
 interface RecallModalProps {
   open: boolean;
@@ -41,92 +41,87 @@ export default function RecallModal(props: RecallModalProps) {
   }
 
   return (
-    <div className="w-screen h-screen fixed top-0 left-0 bg-[rgba(24,24,24,0.8)] backdrop-blur-[1px] flex justify-center items-center z-50">
-      <div className="flex flex-col justify-center">
-        <div
-          ref={modalRef}
-          className="bg-neutral-100 text-neutral-900 dark:bg-neutral-850 dark:text-neutral-50 opacity-100 rounded-md flex flex-col"
-        >
-          <div className="flex items-center p-4 justify-between w-130">
-            <div className="font-normal text-2xl flex items-center">
-              {props.title}
-              <Button variants="secondaryIcon" icon={<Pen size={"14px"} />} />
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+      <div
+        ref={modalRef}
+        className="bg-neutral-850 text-neutral-50 rounded-lg shadow-xl w-full max-w-lg flex flex-col"
+      >
+        <div className="flex items-center justify-between p-4 border-b border-neutral-700">
+          <div className="font-semibold text-xl flex items-center gap-2">
+            <span className="truncate">{props.title}</span>
+            <Button variants="secondaryIcon" icon={<Pen size={"14px"} />} />
+          </div>
+          <Button onClick={props.onClose} variants="icon" icon={<RxCross2 />} />
+        </div>
+
+        <div className="p-4 space-y-6 overflow-y-auto max-h-[70vh]">
+          <div>
+            <div className="text-sm font-medium text-neutral-400 mb-2">
+              Notes
             </div>
-            <div onClick={props.onClose} className="cursor-pointer">
-              <Button variants="secondaryIcon" icon={<RxCross2 />} />
+            <div className="text-neutral-200 flex items-center justify-between">
+              {props.note || (
+                <span className="text-neutral-500">No note added.</span>
+              )}
+              <Button variants="secondaryIcon" icon={<Pen size={"12px"} />} />
             </div>
           </div>
-          <div className="px-4 mt-2">
-            <div>Notes</div>
-            <div className="font-extralight flex items-center my-2">
-              {props.note}
-              {props.note.length > 0 ? (
-                <Button variants="secondaryIcon" icon={<Pen size={"12px"} />} />
+
+          <div>
+            <div className="text-sm font-medium text-neutral-400 mb-2">
+              Tags
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {tags.length > 0 ? (
+                tags.map((tag) => (
+                  <Badge key={tag} variants={"input"} tag={tag} />
+                ))
               ) : (
-                <div>
-                  <span className="font-extralight items-center my-2">
-                    add note
-                  </span>
-                  <Button
-                    variants="secondaryIcon"
-                    icon={<Pen size={"12px"} />}
-                  />
-                </div>
+                <span className="text-neutral-500 text-sm">No tags added.</span>
               )}
             </div>
           </div>
-          <div className="px-4 mt-4">
-            <div>Tags</div>
-            <div className="flex flex-wrap gap-2 my-2">
-              {tags.map((tag) => {
-                return <Badge variants={"input"} tag={tag} />;
-              })}
+
+          <div>
+            <div className="text-sm font-medium text-neutral-400 mb-2">
+              Link
             </div>
-          </div>
-          <div className="px-4 mt-4">
-            <div>Link</div>
-            <div className="bg-neutral-750 rounded-md p-3 my-2 text-neutral-200">
-              <div className="flex items-center">
-                <div
-                  className="overflow-hidden text-ellipsis whitespace-nowrap flex-shrink"
-                  style={{ width: "400px", maxWidth: "400px" }}
-                  title={props.link}
-                >
-                  {props.link}
-                </div>
-                <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-                  <Button
-                    variants="secondaryIcon"
-                    icon={<Pen size={"14px"} />}
-                  />
-                  <Button
-                    variants="secondaryIcon"
-                    icon={<RxExternalLink />}
-                    onClick={() =>
-                      props.link && window.open(props.link, "_blank")
-                    }
-                  />
-                </div>
+            <div className="bg-neutral-750 rounded-md p-3 flex items-center justify-between gap-4">
+              <a
+                href={props.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:underline truncate"
+                title={props.link}
+              >
+                {props.link}
+              </a>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Button variants="secondaryIcon" icon={<Pen size={"14px"} />} />
+                <Button
+                  variants="secondaryIcon"
+                  icon={<RxExternalLink />}
+                  onClick={() => window.open(props.link, "_blank")}
+                />
               </div>
             </div>
           </div>
-          <div className="px-4 mt-3 mb-5 flex items-center gap-2">
-            <div onClick={props.onClose} className="cursor-pointer">
-              <Button variants="secondary" text="Cancel" className="w-50" />
-            </div>
-            <div className="w-full">
-              <Button variants="submit" text="Save" />
-            </div>
+        </div>
+
+        <div className="flex items-center gap-4 p-4 border-t border-neutral-700 bg-neutral-800 rounded-b-lg">
+          <Button
+            variants="destructiveIcon"
+            icon={<Trash2 size={"18px"} />}
+            onClick={() => deleteRecall(props.id)}
+          />
+          <div className="flex-grow flex items-center gap-2">
             <Button
-              variants="destructiveIcon"
-              icon={
-                <Trash2
-                  size={"18px"}
-                  className="w-10"
-                  onClick={() => deleteRecall(props.id)}
-                />
-              }
+              onClick={props.onClose}
+              variants="secondary"
+              text="Cancel"
+              className="w-full"
             />
+            <Button variants="submit" text="Save" className="w-full" />
           </div>
         </div>
       </div>

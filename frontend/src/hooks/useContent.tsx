@@ -1,19 +1,16 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { BACKEND_URL } from "../config";
-
-interface ContentItem {
-  id: string;
-  title: string;
-  note?: string;
-  tags?: string[];
-  link: string;
-}
+import type { ContentItem } from "../components/ui/default";
+import { useNavigate } from "react-router-dom";
+import { toast } from "./use-toast";
 
 export default function useContent() {
   const [contents, setContents] = useState<ContentItem[]>([]);
   const [noContentMessage, setNoContentMessage] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const hasShownAuthError = useRef(false);
 
   useEffect(() => {
     fetchContents();
@@ -35,8 +32,8 @@ export default function useContent() {
                   new Date(b.createdAt).getTime() -
                   new Date(a.createdAt).getTime()
               )
-              .map((item: any) => ({
-                id: item._id,
+              .map((item: ContentItem) => ({
+                _id: item._id,
                 title: item.title,
                 note: item.note,
                 tags: item.tags,
@@ -52,7 +49,17 @@ export default function useContent() {
         setLoading(false);
       })
       .catch((e) => {
-        console.error("error fetching content: ", e);
+        if (
+          e.response &&
+          e.response.status === 401 &&
+          !hasShownAuthError.current
+        ) {
+          hasShownAuthError.current = true;
+          toast("Please sign in to continue", "error");
+          navigate("/auth");
+        } else {
+          console.error("error fetching content: ", e);
+        }
         setLoading(false);
       });
   };

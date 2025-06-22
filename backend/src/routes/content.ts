@@ -20,7 +20,7 @@ contentRouter.get(
       });
     } else {
       res.json({
-        noContent: "Add recalls",
+        noContent: "you have no recalls",
       });
     }
   }

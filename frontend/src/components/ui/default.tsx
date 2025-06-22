@@ -1,7 +1,7 @@
 export const fadeInOut = "transition ease-in-out duration-200 cursor-pointer";
 
 export interface ContentItem {
-  id: string;
+  _id: string;
   title: string;
   note: string;
   tags?: string[];

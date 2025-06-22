@@ -2,6 +2,7 @@ import { RxExternalLink } from "react-icons/rx";
 import { fadeInOut } from "./default";
 import { useCompactTimeAgo } from "../../utils/timeAgo";
 import getIcon from "../../utils/getIcon";
+import Badge from "./Badge";
 
 interface CardProps {
   id: string;
@@ -15,6 +16,25 @@ interface CardProps {
 
 export default function Card(props: CardProps) {
   const timeAgo = useCompactTimeAgo(props.createdAt);
+
+  const renderTags = () => {
+    if (!props.tags || props.tags.length === 0) return null;
+
+    const maxVisibleTags = 3;
+    const visibleTags = props.tags.slice(0, maxVisibleTags);
+    const remainingCount = props.tags.length - maxVisibleTags;
+
+    return (
+      <div className="flex items-center gap-1 mt-1">
+        {visibleTags.map((tag, index) => (
+          <Badge key={index} variants="primary" tag={tag} />
+        ))}
+        {remainingCount > 0 && (
+          <Badge variants="primary" tag={`+${remainingCount}`} />
+        )}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -43,6 +63,8 @@ export default function Card(props: CardProps) {
       </div>
 
       <div className="flex items-center gap-2 ml-3">
+        {/* Tags */}
+        {renderTags()}
         <RxExternalLink className="h-4 w-4 text-neutral-400 dark:text-neutral-500 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
     </div>

@@ -2,16 +2,24 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "./config";
 
-async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  const header = req.headers.authorization;
-  const decodedData = jwt.verify(header as string, JWT_SECRET!);
-  if (decodedData) {
+function authMiddleware(req: Request, res: Response, next: NextFunction) {
+  try {
+    const header = req.headers.authorization;
+
+    if (!header) {
+      res.status(401).json({
+        message: "Authorization header missing",
+      });
+      return;
+    }
+
+    const decodedData = jwt.verify(header, JWT_SECRET!) as { id: string };
     //@ts-ignore
     req.userId = decodedData.id;
     next();
-  } else {
-    res.status(403).json({
-      message: "login to create recalls",
+  } catch (error) {
+    res.status(401).json({
+      message: "Invalid or expired token",
     });
   }
 }

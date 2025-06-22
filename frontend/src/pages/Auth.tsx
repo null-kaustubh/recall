@@ -4,6 +4,9 @@ import Button from "../components/ui/Button";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
+import { ZodError } from "zod";
+import { signinSchema, signupSchema } from "../utils/validation";
+import { toast } from "../hooks/use-toast";
 
 export default function Auth() {
   const [mode, setMode] = useState<"signin" | "signup">("signup");
@@ -14,36 +17,78 @@ export default function Auth() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  };
+
+  const clearForm = () => {
+    setFormData({ username: "", password: "", confirmPassword: "" });
+    setErrors({});
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (mode === "signin") {
-      const response = await axios.post(`${BACKEND_URL}api/signin`, {
-        username: formData.username,
-        password: formData.password,
-      });
-      //store token to headers
-      const jwt = response.data.token;
-      localStorage.setItem("token", jwt);
-      //navigate user to dashboard
-      navigate("/dashboard");
-    } else {
-      await axios.post(`${BACKEND_URL}api/signup`, {
-        username: formData.username,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-      });
-      setMode("signin");
-      setFormData({
-        username: "",
-        password: "",
-        confirmPassword: "",
-      });
+    setLoading(true);
+    setErrors({});
+
+    try {
+      const schema = mode === "signup" ? signupSchema : signinSchema;
+      const dataToValidate =
+        mode === "signup"
+          ? formData
+          : { username: formData.username, password: formData.password };
+
+      schema.parse(dataToValidate);
+
+      if (mode === "signin") {
+        const response = await axios.post(`${BACKEND_URL}api/signin`, {
+          username: formData.username,
+          password: formData.password,
+        });
+        localStorage.setItem("token", response.data.token);
+        navigate("/dashboard");
+      } else {
+        await axios.post(`${BACKEND_URL}api/signup`, {
+          username: formData.username,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+        });
+        toast("Signed up successfully! Please sign in.", "success");
+        setMode("signin");
+        clearForm();
+      }
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const fieldErrors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          const field = err.path[0];
+          if (field) {
+            fieldErrors[field] = err.message;
+          }
+        });
+        setErrors(fieldErrors);
+      } else if (axios.isAxiosError(error) && error.response) {
+        setErrors({
+          general: error.response.data.message || "An error occurred.",
+        });
+      } else {
+        setErrors({ general: "Something went wrong. Please try again." });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,13 +100,7 @@ export default function Auth() {
             <button
               onClick={() => {
                 setMode("signup");
-                setFormData({
-                  username: "",
-                  password: "",
-                  confirmPassword: "",
-                });
-                setShowPassword(false);
-                setShowConfirmPassword(false);
+                clearForm();
               }}
               className={`flex-1 py-1 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
                 mode === "signup"
@@ -74,13 +113,7 @@ export default function Auth() {
             <button
               onClick={() => {
                 setMode("signin");
-                setFormData({
-                  username: "",
-                  password: "",
-                  confirmPassword: "",
-                });
-                setShowPassword(false);
-                setShowConfirmPassword(false);
+                clearForm();
               }}
               className={`flex-1 py-1 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
                 mode === "signin"
@@ -120,8 +153,15 @@ export default function Auth() {
                 placeholder="johndoe"
                 value={formData.username}
                 onChange={(e) => handleInputChange("username", e.target.value)}
-                className="w-full px-3 py-1.5 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
+                className={`w-full px-3 py-1.5 bg-neutral-800 border rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all ${
+                  errors.username ? "border-red-500" : "border-neutral-700"
+                }`}
               />
+              {errors.username && (
+                <p className="text-red-400 text-xs font-extralight">
+                  {errors.username}
+                </p>
+              )}
             </div>
 
             {/* Password Field */}
@@ -141,7 +181,9 @@ export default function Auth() {
                   onChange={(e) =>
                     handleInputChange("password", e.target.value)
                   }
-                  className="w-full px-3 py-1.5 pr-10 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
+                  className={`w-full px-3 py-1.5 pr-10 bg-neutral-800 border rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all ${
+                    errors.password ? "border-red-500" : "border-neutral-700"
+                  }`}
                 />
                 <button
                   type="button"
@@ -151,6 +193,11 @@ export default function Auth() {
                   {showPassword ? <HiEyeOff size={18} /> : <HiEye size={18} />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-red-400 text-xs font-extralight">
+                  {errors.password}
+                </p>
+              )}
             </div>
 
             {/* Confirm Password Field (only for signup) */}
@@ -171,7 +218,11 @@ export default function Auth() {
                     onChange={(e) =>
                       handleInputChange("confirmPassword", e.target.value)
                     }
-                    className="w-full px-3 py-1.5 pr-10 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
+                    className={`w-full px-3 py-1.5 pr-10 bg-neutral-800 border rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all ${
+                      errors.confirmPassword
+                        ? "border-red-500"
+                        : "border-neutral-700"
+                    }`}
                   />
                   <button
                     type="button"
@@ -185,13 +236,31 @@ export default function Auth() {
                     )}
                   </button>
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-red-400 text-xs font-extralight">
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
+            )}
+
+            {/* General Error Display - moved here to reduce padding */}
+            {errors.general && (
+              <p className="text-red-400 text-sm font-extralight -mt-2">
+                {errors.general}
+              </p>
             )}
 
             {/* Submit Button */}
             <Button
               variants="submit"
-              text={mode === "signin" ? "Sign In" : "Sign Up"}
+              text={
+                loading
+                  ? "Loading..."
+                  : mode === "signin"
+                  ? "Sign In"
+                  : "Sign Up"
+              }
             />
             {/* Toggle Mode Link */}
             <div className="text-center text-sm text-neutral-400">
@@ -200,7 +269,10 @@ export default function Auth() {
                   {"Don't have an account? "}
                   <button
                     type="button"
-                    onClick={() => setMode("signup")}
+                    onClick={() => {
+                      setMode("signup");
+                      clearForm();
+                    }}
                     className="text-white hover:text-neutral-200 font-medium transition-colors focus:outline-none focus:underline cursor-pointer"
                   >
                     Sign up
@@ -211,7 +283,10 @@ export default function Auth() {
                   {"Already have an account? "}
                   <button
                     type="button"
-                    onClick={() => setMode("signin")}
+                    onClick={() => {
+                      setMode("signin");
+                      clearForm();
+                    }}
                     className="text-white hover:text-neutral-200 font-medium transition-colors focus:outline-none focus:underline cursor-pointer"
                   >
                     Sign in
