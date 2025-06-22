@@ -36,7 +36,7 @@ export function getCompactTimeAgo(createdAt: string | Date): string {
 }
 
 export function useCompactTimeAgo(
-  createdAt: string | Date | undefined,
+  createdAt: string,
   updateInterval: number = 60000
 ): string {
   const [timeAgo, setTimeAgo] = useState<string>(() =>
