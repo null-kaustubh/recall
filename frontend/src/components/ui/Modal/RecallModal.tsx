@@ -5,7 +5,7 @@ import { Pen, Trash2 } from "lucide-react";
 import Button from "../Button";
 import Badge from "../Badge";
 import axios from "axios";
-import { BACKEND_URL } from "../../../config";
+import { API_BASE_URL } from "../../../config";
 
 interface RecallModalProps {
   open: boolean;
@@ -25,10 +25,14 @@ export default function RecallModal(props: RecallModalProps) {
   if (!props.open) return null;
   const tags = props.tags;
 
+  const baseUrl = API_BASE_URL.endsWith("/")
+    ? API_BASE_URL.slice(0, -1)
+    : API_BASE_URL;
+
   async function deleteRecall(id: string) {
     try {
       console.log("deleting: ", id);
-      await axios.delete(`${BACKEND_URL}api/content`, {
+      await axios.delete(`${baseUrl}/api/content`, {
         data: { contentId: id },
         headers: {
           Authorization: localStorage.getItem("token"),

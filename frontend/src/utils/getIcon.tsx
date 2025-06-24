@@ -12,7 +12,12 @@ import { RxFileText } from "react-icons/rx";
 
 export default function getIcon(url: string) {
   try {
-    const domain = new URL(url).hostname.toLowerCase();
+    const fullUrl =
+      url.startsWith("http://") || url.startsWith("https://")
+        ? url
+        : `https://${url}`;
+
+    const domain = new URL(fullUrl).hostname.toLowerCase();
 
     if (domain.includes("twitter.com") || domain.includes("x.com"))
       return <AiOutlineTwitter />;

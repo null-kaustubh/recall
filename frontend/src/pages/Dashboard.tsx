@@ -73,7 +73,7 @@ function Dashboard() {
             <div className="text-center text-neutral-400 py-8">
               <p>{noContentMessage || "No content available"}</p>
               <Button
-                variants="secondary"
+                variants="primary"
                 onClick={() => setContentModalOpen(true)}
                 className="mt-4"
                 text="get started"

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import Button from "../components/ui/Button";
 import { HiEye, HiEyeOff } from "react-icons/hi";
-import { BACKEND_URL } from "../config";
+import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { ZodError } from "zod";
 import { signinSchema, signupSchema } from "../utils/validation";
@@ -53,15 +53,22 @@ export default function Auth() {
 
       schema.parse(dataToValidate);
 
+      const baseUrl = API_BASE_URL.endsWith("/")
+        ? API_BASE_URL.slice(0, -1)
+        : API_BASE_URL;
+
+      const endpoint = mode === "signin" ? "/api/signin" : "/api/signup";
+      const fullUrl = `${baseUrl}${endpoint}`;
+
       if (mode === "signin") {
-        const response = await axios.post(`${BACKEND_URL}api/signin`, {
+        const response = await axios.post(fullUrl, {
           username: formData.username,
           password: formData.password,
         });
         localStorage.setItem("token", response.data.token);
         navigate("/dashboard");
       } else {
-        await axios.post(`${BACKEND_URL}api/signup`, {
+        await axios.post(fullUrl, {
           username: formData.username,
           password: formData.password,
           confirmPassword: formData.confirmPassword,
@@ -71,6 +78,8 @@ export default function Auth() {
         clearForm();
       }
     } catch (error) {
+      console.error("Submit error:", error);
+
       if (error instanceof ZodError) {
         const fieldErrors: Record<string, string> = {};
         error.errors.forEach((err) => {
@@ -80,10 +89,45 @@ export default function Auth() {
           }
         });
         setErrors(fieldErrors);
-      } else if (axios.isAxiosError(error) && error.response) {
-        setErrors({
-          general: error.response.data.message || "An error occurred.",
+      } else if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          url: error.config?.url,
+          method: error.config?.method,
+          message: error.message,
         });
+
+        if (error.code === "ECONNABORTED") {
+          setErrors({
+            general:
+              "Request timeout. The server might be starting up. Please try again.",
+          });
+        } else if (error.response?.status === 404) {
+          setErrors({
+            general: `API endpoint not found at ${error.config?.url}. Please check the backend configuration.`,
+          });
+        } else if (error.response?.status && error.response.status >= 500) {
+          setErrors({
+            general: "Server error. Please try again in a moment.",
+          });
+        } else if (error.response) {
+          setErrors({
+            general:
+              error.response.data?.message ||
+              `Server error: ${error.response.status}`,
+          });
+        } else if (error.request) {
+          setErrors({
+            general:
+              "Cannot connect to server. Please check your internet connection and try again.",
+          });
+        } else {
+          setErrors({
+            general: "Network error occurred. Please try again.",
+          });
+        }
       } else {
         setErrors({ general: "Something went wrong. Please try again." });
       }
