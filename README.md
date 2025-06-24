@@ -64,8 +64,6 @@ cp .env.example .env
 # Configure your environment variables in .env
 MONGODB_URI=mongodb://localhost:27017/recall
 JWT_SECRET=your-super-secret-jwt-key
-PORT=3000
-CORS_ORIGIN=http://localhost:5173
 ```
 
 ### 3. Frontend Setup
