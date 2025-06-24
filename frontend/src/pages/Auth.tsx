@@ -254,6 +254,7 @@ export default function Auth() {
             {/* Submit Button */}
             <Button
               variants="submit"
+              type="submit"
               text={
                 loading
                   ? "Loading..."
