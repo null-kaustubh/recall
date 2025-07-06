@@ -1,15 +1,24 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../components/ui/Button";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { API_BASE_URL } from "../config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ZodError } from "zod";
 import { signinSchema, signupSchema } from "../utils/validation";
 import { toast } from "../hooks/use-toast";
 
 export default function Auth() {
-  const [mode, setMode] = useState<"signin" | "signup">("signup");
+  const [searchParams] = useSearchParams();
+  const initialMode =
+    searchParams.get("mode") === "signin"
+      ? "signin"
+      : searchParams.get("mode") === "signup"
+      ? "signup"
+      : "signup";
+  const [mode, setMode] = useState<"signin" | "signup">(
+    initialMode as "signin" | "signup"
+  );
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -20,6 +29,16 @@ export default function Auth() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Update mode if URL changes
+  useEffect(() => {
+    if (searchParams.get("mode") === "signin" && mode !== "signin") {
+      setMode("signin");
+    } else if (searchParams.get("mode") === "signup" && mode !== "signup") {
+      setMode("signup");
+    }
+    // eslint-disable-next-line
+  }, [searchParams]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -137,19 +156,20 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md border border-neutral-750 rounded-lg shadow-xl flex flex-col p-4 bg-neutral-850">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-neutral-50 dark:bg-neutral-900">
+      <div className="w-full max-w-md border border-neutral-300 dark:border-neutral-750 rounded-lg shadow-xl flex flex-col p-4 bg-white dark:bg-neutral-850">
         <div className="p-6 space-y-4">
-          <div className="flex bg-neutral-750 rounded-lg p-1">
+          <div className="flex bg-neutral-200 dark:bg-neutral-750 rounded-lg p-1">
             <button
               onClick={() => {
                 setMode("signup");
                 clearForm();
+                navigate("/auth?mode=signup");
               }}
               className={`flex-1 py-1 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
                 mode === "signup"
                   ? "bg-white text-neutral-900 shadow-sm"
-                  : "text-neutral-400 hover:text-neutral-200"
+                  : "text-neutral-200 dark:text-neutral-400 hover:text-neutral-50 dark:hover:text-neutral-200"
               }`}
             >
               Sign Up
@@ -158,11 +178,12 @@ export default function Auth() {
               onClick={() => {
                 setMode("signin");
                 clearForm();
+                navigate("/auth?mode=signin");
               }}
               className={`flex-1 py-1 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
                 mode === "signin"
                   ? "bg-white text-neutral-900 shadow-sm"
-                  : "text-neutral-400 hover:text-neutral-200"
+                  : "text-neutral-200 dark:text-neutral-400 hover:text-neutral-50 dark:hover:text-neutral-200"
               }`}
             >
               Sign In
@@ -170,10 +191,10 @@ export default function Auth() {
           </div>
 
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
               {mode === "signin" ? "Welcome back" : "Create account"}
             </h1>
-            <p className="text-neutral-400 mt-1">
+            <p className="text-neutral-600 dark:text-neutral-400 mt-1">
               {mode === "signin"
                 ? "enter your credentials to access your recalls"
                 : "enter your information to start creating recalls"}
@@ -187,7 +208,7 @@ export default function Auth() {
             <div className="space-y-1">
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-neutral-200"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-200"
               >
                 Username
               </label>
@@ -197,8 +218,10 @@ export default function Auth() {
                 placeholder="johndoe"
                 value={formData.username}
                 onChange={(e) => handleInputChange("username", e.target.value)}
-                className={`w-full px-3 py-1.5 bg-neutral-800 border rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all ${
-                  errors.username ? "border-red-500" : "border-neutral-700"
+                className={`w-full px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 border rounded-md text-neutral-900 dark:text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all ${
+                  errors.username
+                    ? "border-red-500"
+                    : "border-neutral-300 dark:border-neutral-700"
                 }`}
               />
               {errors.username && (
@@ -212,7 +235,7 @@ export default function Auth() {
             <div className="space-y-1">
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-neutral-200"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-200"
               >
                 Password
               </label>
@@ -225,14 +248,16 @@ export default function Auth() {
                   onChange={(e) =>
                     handleInputChange("password", e.target.value)
                   }
-                  className={`w-full px-3 py-1.5 pr-10 bg-neutral-800 border rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all ${
-                    errors.password ? "border-red-500" : "border-neutral-700"
+                  className={`w-full px-3 py-1.5 pr-10 bg-neutral-100 dark:bg-neutral-800 border rounded-md text-neutral-900 dark:text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all ${
+                    errors.password
+                      ? "border-red-500"
+                      : "border-neutral-300 dark:border-neutral-700"
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-400 hover:text-neutral-200 transition-colors"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
                 >
                   {showPassword ? <HiEyeOff size={18} /> : <HiEye size={18} />}
                 </button>
@@ -249,7 +274,7 @@ export default function Auth() {
               <div className="space-y-1">
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-neutral-200"
+                  className="block text-sm font-medium text-neutral-700 dark:text-neutral-200"
                 >
                   Confirm Password
                 </label>
@@ -262,16 +287,16 @@ export default function Auth() {
                     onChange={(e) =>
                       handleInputChange("confirmPassword", e.target.value)
                     }
-                    className={`w-full px-3 py-1.5 pr-10 bg-neutral-800 border rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all ${
+                    className={`w-full px-3 py-1.5 pr-10 bg-neutral-100 dark:bg-neutral-800 border rounded-md text-neutral-900 dark:text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all ${
                       errors.confirmPassword
                         ? "border-red-500"
-                        : "border-neutral-700"
+                        : "border-neutral-300 dark:border-neutral-700"
                     }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-400 hover:text-neutral-200 focus:outline-none focus:text-neutral-200 transition-colors"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 focus:outline-none focus:text-neutral-700 dark:focus:text-neutral-200 transition-colors"
                   >
                     {showConfirmPassword ? (
                       <HiEyeOff size={18} />
@@ -306,9 +331,10 @@ export default function Auth() {
                   ? "Sign In"
                   : "Sign Up"
               }
+              className="bg-neutral-800 hover:bg-neutral-700"
             />
             {/* Toggle Mode Link */}
-            <div className="text-center text-sm text-neutral-400">
+            <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
               {mode === "signin" ? (
                 <>
                   {"Don't have an account? "}
@@ -317,8 +343,9 @@ export default function Auth() {
                     onClick={() => {
                       setMode("signup");
                       clearForm();
+                      navigate("/auth?mode=signup");
                     }}
-                    className="text-white hover:text-neutral-200 font-medium transition-colors focus:outline-none focus:underline cursor-pointer"
+                    className="text-neutral-900 dark:text-white hover:text-neutral-700 dark:hover:text-neutral-200 font-medium transition-colors focus:outline-none focus:underline cursor-pointer"
                   >
                     Sign up
                   </button>
@@ -331,8 +358,9 @@ export default function Auth() {
                     onClick={() => {
                       setMode("signin");
                       clearForm();
+                      navigate("/auth?mode=signin");
                     }}
-                    className="text-white hover:text-neutral-200 font-medium transition-colors focus:outline-none focus:underline cursor-pointer"
+                    className="text-neutral-900 dark:text-white hover:text-neutral-700 dark:hover:text-neutral-200 font-medium transition-colors focus:outline-none focus:underline cursor-pointer"
                   >
                     Sign in
                   </button>

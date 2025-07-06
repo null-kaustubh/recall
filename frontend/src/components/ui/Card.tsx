@@ -43,7 +43,9 @@ export default function Card(props: CardProps) {
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {props.url && (
-          <div className="text-xl text-neutral-400">{getIcon(props.url)}</div>
+          <div className="text-xl text-neutral-500 dark:text-neutral-400">
+            {getIcon(props.url)}
+          </div>
         )}
         <div className="min-w-0 flex-1">
           <h3 className="font-medium text-sm text-neutral-800 dark:text-neutral-200 truncate">
@@ -52,7 +54,7 @@ export default function Card(props: CardProps) {
           {/* Date and Author */}
           <div className="flex items-center gap-2 mt-1">
             {(props.author || timeAgo) && (
-              <div className="text-xs dark:text-neutral-500">
+              <div className="text-xs text-neutral-500 dark:text-neutral-500">
                 {props.author && <span>{props.author}</span>}
                 {props.author && timeAgo && <span>·</span>}
                 {timeAgo && <span>{timeAgo}</span>}
@@ -65,7 +67,7 @@ export default function Card(props: CardProps) {
       <div className="flex items-center gap-2 ml-3">
         {/* Tags */}
         {renderTags()}
-        <RxExternalLink className="h-4 w-4 text-neutral-400 dark:text-neutral-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <RxExternalLink className="h-4 w-4 text-neutral-500 dark:text-neutral-500 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
     </div>
   );

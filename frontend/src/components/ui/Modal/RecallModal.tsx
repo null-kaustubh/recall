@@ -48,9 +48,9 @@ export default function RecallModal(props: RecallModalProps) {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
       <div
         ref={modalRef}
-        className="bg-neutral-850 text-neutral-50 rounded-lg shadow-xl w-full max-w-lg flex flex-col"
+        className="bg-white dark:bg-neutral-850 text-neutral-900 dark:text-neutral-50 rounded-lg shadow-xl w-full max-w-lg flex flex-col"
       >
-        <div className="flex items-center justify-between p-4 border-b border-neutral-700">
+        <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
           <div className="font-semibold text-xl flex items-center gap-2">
             <span className="truncate">{props.title}</span>
             <Button variants="secondaryIcon" icon={<Pen size={"14px"} />} />
@@ -60,10 +60,10 @@ export default function RecallModal(props: RecallModalProps) {
 
         <div className="p-4 space-y-6 overflow-y-auto max-h-[70vh]">
           <div>
-            <div className="text-sm font-medium text-neutral-400 mb-2">
+            <div className="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-2">
               Notes
             </div>
-            <div className="text-neutral-200 flex items-center justify-between">
+            <div className="text-neutral-700 dark:text-neutral-200 flex items-center justify-between">
               {props.note || (
                 <span className="text-neutral-500">No note added.</span>
               )}
@@ -72,7 +72,7 @@ export default function RecallModal(props: RecallModalProps) {
           </div>
 
           <div>
-            <div className="text-sm font-medium text-neutral-400 mb-2">
+            <div className="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-2">
               Tags
             </div>
             <div className="flex flex-wrap gap-2">
@@ -87,15 +87,15 @@ export default function RecallModal(props: RecallModalProps) {
           </div>
 
           <div>
-            <div className="text-sm font-medium text-neutral-400 mb-2">
+            <div className="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-2">
               Link
             </div>
-            <div className="bg-neutral-750 rounded-md p-3 flex items-center justify-between gap-4">
+            <div className="bg-neutral-100 dark:bg-neutral-750 rounded-md p-3 flex items-center justify-between gap-4">
               <a
                 href={props.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:underline truncate"
+                className="text-blue-600 dark:text-blue-400 hover:underline truncate"
                 title={props.link}
               >
                 {props.link}
@@ -112,7 +112,7 @@ export default function RecallModal(props: RecallModalProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 p-4 border-t border-neutral-700 bg-neutral-800 rounded-b-lg">
+        <div className="flex items-center gap-4 p-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-b-lg">
           <Button
             variants="destructiveIcon"
             icon={<Trash2 size={"18px"} />}

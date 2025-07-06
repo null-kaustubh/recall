@@ -118,9 +118,9 @@ export default function CreateContentModal(props: CreateContentModalProps) {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
       <div
         ref={contentRef}
-        className="bg-neutral-850 text-neutral-50 rounded-lg shadow-xl w-full max-w-lg flex flex-col"
+        className="bg-white dark:bg-neutral-850 text-neutral-900 dark:text-neutral-50 rounded-lg shadow-xl w-full max-w-lg flex flex-col"
       >
-        <div className="flex items-center justify-between p-4 border-b border-neutral-700">
+        <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
           <h2 className="font-semibold text-xl">
             Create a{" "}
             <span className="bg-gradient-to-tr from-[#FFC300] via-[#FFD700] to-[#FFFACD] bg-clip-text text-transparent">
@@ -136,7 +136,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
             <div className="space-y-1">
               <label
                 htmlFor="title"
-                className="block text-sm font-medium text-neutral-300"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
               >
                 Title
               </label>
@@ -146,7 +146,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
                 placeholder="e.g., React.js useful tips"
                 value={formData.title}
                 onChange={(e) => handleInputChange("title", e.target.value)}
-                className="w-full px-3 py-1.5 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
+                className="w-full px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md text-neutral-900 dark:text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
               />
             </div>
 
@@ -154,7 +154,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
             <div className="space-y-1">
               <label
                 htmlFor="link"
-                className="block text-sm font-medium text-neutral-300"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
               >
                 Link
               </label>
@@ -164,7 +164,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
                 placeholder="https://example.com"
                 value={formData.link}
                 onChange={(e) => handleInputChange("link", e.target.value)}
-                className="w-full px-3 py-1.5 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
+                className="w-full px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md text-neutral-900 dark:text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
               />
             </div>
 
@@ -172,7 +172,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
             <div className="space-y-1">
               <label
                 htmlFor="notes"
-                className="block text-sm font-medium text-neutral-300"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
               >
                 Notes (Optional)
               </label>
@@ -182,7 +182,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
                 value={formData.note}
                 onChange={(e) => handleInputChange("note", e.target.value)}
                 minRows={3}
-                className="w-full px-3 py-1.5 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
+                className="w-full px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md text-neutral-900 dark:text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
               />
             </div>
 
@@ -190,7 +190,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
             <div className="space-y-1">
               <label
                 htmlFor="tags"
-                className="block text-sm font-medium text-neutral-300"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
               >
                 Tags (Optional)
               </label>
@@ -202,7 +202,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
                   value={currentTag}
                   onChange={(e) => setCurrentTag(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  className="w-full px-3 py-1.5 bg-neutral-800 border border-neutral-700 rounded-md text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
+                  className="w-full px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md text-neutral-900 dark:text-white text-sm font-light placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-transparent transition-all"
                 />
               </div>
             </div>
@@ -221,7 +221,7 @@ export default function CreateContentModal(props: CreateContentModalProps) {
               </div>
             )}
           </div>
-          <div className="flex items-center justify-end gap-2 p-4 border-t border-neutral-700 bg-neutral-800 rounded-b-lg">
+          <div className="flex items-center justify-end gap-2 p-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded-b-lg">
             <div className="w-1/2 pr-1">
               <Button
                 type="button"

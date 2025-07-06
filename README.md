@@ -7,6 +7,7 @@ A modern, secure link management application that lets you save, organize, and m
 - **Secure Authentication** - JWT-based user authentication with secure password handling
 - **Link Management** - Create, read, update, and delete your saved links (recalls)
 - **Clean UI** - Minimal, eye-pleasing interface built with Tailwind CSS
+- **Light/Dark Mode** - Toggle between light and dark themes for comfortable viewing
 - **Responsive Design** - Works seamlessly across desktop and mobile devices
 - **Fast Performance** - Built with Vite for lightning-fast development and production builds
 - **Real-time Feedback** - Toast notifications for user actions and error handling
@@ -181,3 +182,19 @@ _Note: Edit and search functionality will be available in upcoming versions._
 ---
 
 **Happy Link Managing! 🔗✨**
+
+## 🌓 Theme Support
+
+The application supports both light and dark themes:
+
+- **Theme Toggle** - Click the sun/moon icon in the dashboard header to switch themes
+- **Persistent Preference** - Your theme choice is saved in localStorage
+- **System Preference** - Automatically detects and uses your system's color scheme preference
+- **Smooth Transitions** - All theme changes include smooth color transitions
+
+### Theme Features:
+
+- **Light Mode** - Clean white background with dark text for bright environments
+- **Dark Mode** - Dark background with light text for low-light environments
+- **Automatic Detection** - Respects your system's color scheme preference
+- **Manual Override** - You can manually switch themes regardless of system preference
